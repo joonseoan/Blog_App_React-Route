@@ -22,7 +22,7 @@ to dynamially change inside of the single HTML document.
 
 The changing contents inside of the single HTML are composed of the components.
 
-3 kinds of routes we will create
+- kinds of routes we will create
 -----------------------------------
 4. Home Route Convention
 
@@ -41,26 +41,26 @@ The changing contents inside of the single HTML are composed of the components.
 
 In route, we need to change state syntax slightly.
 
-When we fetch post from api, there would be a unique propert like "id".
+When we fetch post from api, there would be a unique property like "id".
 
 Previously, we implement "state" like this.
 ---------------------------------------------------------------
 key             type                 Sample (Example)
 ===============================================================
-posts		array			[
-					  {title:'hello', contnet:'hi', id:4}
-					  {title:'bye', content: 'bye', id: 5}
-						
-					]
+posts	        	array			    [
+                                { title:'hello', contnet:'hi', id:4 }
+                                { title:'bye', content: 'bye', id: 5 } 
+                              ]
 
 
-selectedPost	object			{title:'hello', contnet:'hi', id:4}
+selectedPost	  object		  	{ title:'hello', contnet:'hi', id:4 }
 (activePost)
+
 
 --------------------------------------------------------------------
 
 When we use 'route' we need do not need to 'selected or active post'
-Instead, we should take an advantage of "id" of the object.
+Instead, we should take an advantage of "id" inside of the object.
 Then, for the particular post, we put this "id" into url (Route).
 
 step1)
@@ -68,13 +68,12 @@ step1)
 ---------------------------------------------------------------
 key             type                 Sample (Example)
 ===============================================================
-posts		array			[
-					  {title:'hello', contnet:'hi', id:4}
-					  {title:'bye', content: 'bye', id: 5}
-						
-					]
+posts		        array		      	[
+                                    { title:'hello', contnet:'hi', id:4 }
+                                    { title:'bye', content:'bye', id:5 }
+                                ]
 
-post id		Route path "~~/:4"	{title:'hello', contnet:'hi', id:4}
+post id		    Route path "~~/:4"	  { title:'hello', contnet:'hi', id:4 }
 
 
 step2)
@@ -83,33 +82,31 @@ Conventionally, we should use object instead of an array in posts
 ---------------------------------------------------------------
 key             type                 Sample (Example)
 ===============================================================
-posts		array			{
+posts		        array		        {
+                                  4: {  title:'hello', contnet:'hi', id:4 }
+                                  5: {  title:'bye', content: 'bye', id: 5  }
+					                      }
 
-					  4: {title:'hello', contnet:'hi', id:4}
-					  5: {title:'bye', content: 'bye', id: 5}
-						
-					}
-
-post id		Route path "~~/:4"	4: {title:'hello', contnet:'hi', id:4}
+post id		Route path "~~/:4"	    4: {title:'hello', contnet:'hi', id:4}
 
 
 Just remind that it is for when we are able to change state using "id" or 
 break down routes into a singe route tagged with "id"
 
-[FYI***] When we change sub "state" in a route, we can use the previous "selected or active" state rule.
+[FYI***] When we change sub "state" inside of a single route, we can use the previous "selected or active" state rule.
 
 Overview of api
 We just need to understand the below.
 ---------------------------------------
 visit --> http://reduxblog.herokuapp.com/
 
-4 kinds of routes
+Four kinds of routes
 1) Get => fetch 40 post api data from the blog
 2) Post => create the brand new post
-3) Get:id => fetch a single id post api data
+3) Get:id => fetch a single-id post api data (Wild Card)
 4) Delete:id => delete a single id post 
 
-We will use 'fetch' 'Post' and 'Delete'
+[FYI] We will use 'fetch' 'Post' and 'Delete'
 
 
 [FYI]
@@ -132,30 +129,35 @@ import ReactDOM from 'react-dom';
 import { Provider } from 'react-redux';
 import { createStore, applyMiddleware } from 'redux';
 
+
 // import react-router
-// [BrowserRouter] : to interacts with "History" lib 
-//                   
-// [Router] : decides what components are required for the URL
-// given by "HISTORY". It is a role of a kind of routing configuration 
+// [BrowserRouter] : to interacts with "History" lib                   
+// [Route] : decides what components are required for the URL (Route)
+//           given by "HISTORY". It is a role of a kind of routing configuration 
 
 import { BrowserRouter, Route } from 'react-router-dom';
 
 // When we are using "route", we do not need to use central component.
 // <route path='/'> is replaced with 'app' component.
-// App component is only when 'Route' in not necessary.
+// App component is only when 'Route' is not required.
+
 // import App from './components/app';
+
+// import promise and wire it up to middleware to get data.
+import promise from 'redux-promise';
 
 import PostsIndex from './components/posts_index';
 
-import reducers from './reducers';
+import rootReducers from './reducers';
 
-const createStoreWithMiddleware = applyMiddleware()(createStore);
+// wireing promise up to middleware (promise)
+const createStoreWithMiddleware = applyMiddleware(promise)(createStore);
 
 /**
  * First of all, let's play around 'routes'
  * to correctly understand its main concept.
  * 
- * Two routes we just created ad deleted here is a purpose of
+ * Two routes we just created and deleted here are a purpose of
  * understanding
  * 
  */
@@ -194,23 +196,24 @@ class GoodBye extends React.Component {
 
 */
 
-/*
 
+/*
 ReactDOM.render(
   <Provider store={createStoreWithMiddleware(reducers)}>
 
     
-      managing the changed URLs
-      and interacting with HISTORY of the router module
+    managing the changed URLs 
+    and interacting with HISTORY of the router module
     <BrowserRouter>
 
     
+    <div>
+
+       Header: // { It will show up in all components }
+
       configuring the routing path
       and render the components (contents) 
       in the path defined.
-    <div>
-
-      Header: // { It will show up in all components }
       <Route path = "/hello" component = { Hello } />
       <Route path = "/goodbye" component = { GoodBye } />
     </div>
@@ -221,7 +224,7 @@ ReactDOM.render(
   */
 
  ReactDOM.render(
-  <Provider store={createStoreWithMiddleware(reducers)}>
+  <Provider store={createStoreWithMiddleware(rootReducers)}>
     <BrowserRouter>
       <div>
         <Route path = "/" component = {PostsIndex} />

@@ -4,6 +4,9 @@ import { connect } from 'react-redux';
 
 import _ from 'lodash';
 
+// Instead of anchor <a src="">, React uses "Link" module.
+import { Link } from 'react-router-dom';
+
 // create action creator!!
 import { fetchPosts } from '../actions';
 
@@ -17,6 +20,8 @@ class PostsIndex extends Component {
     // we do not have any event.
     // At this momenmt, we can use "Ract lifecycle method"
     // In order to call action creator immediately after the rerder starts
+    // ****** The reason that "didMount" is because react is asynch 
+    // so that we do not know when we have the blog data.
     
     componentDidMount () {
 
@@ -41,9 +46,12 @@ class PostsIndex extends Component {
    renderPosts() {
 
     /****************
-       "_.map" : it has an abilty to transform an object to an array
+
+        "_.map" : it has an abilty to transform an object to an array
        "What the hell, reall need to know"
+
     */
+    
     console.log('_.map(this.props.posts): ', _.map(this.props.posts))
     
     return _.map(this.props.posts, post => {
@@ -57,7 +65,7 @@ class PostsIndex extends Component {
             </li>
         );
 
-        /**
+        /*
          * ***Please, remember that we cannot access a element or propeert
          *    in a way above with a normal array.
          * 
@@ -72,11 +80,6 @@ class PostsIndex extends Component {
     
 
     }); 
-
- 
-        
-    
-
 
 }
 
@@ -95,6 +98,19 @@ class PostsIndex extends Component {
         return (
 
             <div>
+                <div className= "text-xs-right">
+                {/* to = "must be same as Route path" 
+
+                    *****
+                    The difference between anchor tag and "Link"
+                    is that "Link" does not request http and htlm document again.
+                    It just works between the components.   
+
+                */}
+                    <Link className = "btn btn-primary" to="posts/new">
+                        Add a Post
+                    </Link>    
+                </div>
                 <h3>Posts</h3>
                 <ul className="list-group">
 

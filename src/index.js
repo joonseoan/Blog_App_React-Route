@@ -135,7 +135,7 @@ import { createStore, applyMiddleware } from 'redux';
 // [Route] : decides what components are required for the URL (Route)
 //           given by "HISTORY". It is a role of a kind of routing configuration 
 
-import { BrowserRouter, Route } from 'react-router-dom';
+import { BrowserRouter, Route, Switch } from 'react-router-dom';
 
 // When we are using "route", we do not need to use central component.
 // <route path='/'> is replaced with 'app' component.
@@ -144,11 +144,13 @@ import { BrowserRouter, Route } from 'react-router-dom';
 // import App from './components/app';
 
 // import promise and wire it up to middleware to get data.
-import promise from 'redux-promise';
+import promise from 'redux-promise'
+
+import rootReducers from './reducers';
 
 import PostsIndex from './components/posts_index';
 
-import rootReducers from './reducers';
+import PostNew from './components/post_new';
 
 // wireing promise up to middleware (promise)
 const createStoreWithMiddleware = applyMiddleware(promise)(createStore);
@@ -226,9 +228,36 @@ ReactDOM.render(
  ReactDOM.render(
   <Provider store={createStoreWithMiddleware(rootReducers)}>
     <BrowserRouter>
+    
       <div>
-        <Route path = "/" component = {PostsIndex} />
+        <Switch>
+          {/*The longer dirctory must be in the first line.
+           Switch : it interpretes the same paths if the parent directory is same.
+           Therefore, the first child directory "/" could be thought of as a same components.
+           Without <Switch>, it chould make the components in the same page.
+            <
+              <Route path = "/" component = {PostsIndex} />
+               <Route path = "/posts/new" component = {PostNew} /
+            >
+                      
+            FYI, The longer dirctory must be in the first line 
+            because it stops looking for the next if the first 
+            parent directory matches. 
+
+            BTW also, the reason the renders of the different components
+            can be in a single page without <Swtich> is because of React's
+            single page application property/attribute. We might utilze this function.
+
+          */}
+          <Route path = "/posts/new" component = {PostNew} />
+          <Route path = "/" component = {PostsIndex} />
+
+          {/*A small issue is here. 
+          in the same route below, the post index is also rendered.*/}
+          
+        </Switch>
       </div>
+      
     </BrowserRouter>
   </Provider>
   , document.querySelector('.container'));

@@ -13,15 +13,19 @@ import { fetchPosts } from '../actions';
 
 class PostsIndex extends Component {
 
-    // So far in the previous projet, 
-    // we fetched data when we make some event like input or type 
+    // So far, in the previous project, 
+    //      we fetched data when we made some event in the form element.
     
-    // In this case that we just find the blog data and pages
-    // we do not have any event.
+    // In this case that we just found the blog api data 
+    //      we do not have any event.
     // At this momenmt, we can use "Ract lifecycle method"
-    // In order to call action creator immediately after the rerder starts
-    // ****** The reason that "didMount" is because react is asynch 
-    // so that we do not know when we have the blog data.
+    // In order to call action creator immediately 
+    //      after the component completely finishes
+    // ****** The reason that the past of "didMount" is because react is asynch 
+    //      so that we do not know when action creator returns blog data.
+    //      Therefore, we should get plug in the data after the component work ends.
+    // React always has asynch components.
+    // So we do not know when this component can get the api data (it takes a time by the way)
     
     componentDidMount () {
 
@@ -33,9 +37,6 @@ class PostsIndex extends Component {
      * Test : chrome -> network -> xhr
      */
 
-    // React always has asynch components.
-    // So we do not knwo when we can get the api data (it takes a time by the way)
-    // It is not that big of deal here
     // In order to call action creator before the reder stat to work
     /*
         componentWillMount() {
@@ -46,9 +47,8 @@ class PostsIndex extends Component {
    renderPosts() {
 
     /****************
-
-        "_.map" : it has an abilty to transform an object to an array
-       "What the hell, reall need to know"
+        "_.map" : it has an abilty to get the plain object back to an array
+       "What the hell, really need to know of it"
 
     */
     
@@ -86,10 +86,10 @@ class PostsIndex extends Component {
     render() {
 
         // console.log will show up twice.
-        // It is because componentDidMount will try to make an action 
-        // then render without any data first above.
+        // It is because componentDidMount will try to make an action creator work 
+        //      without connection with "stateDispatchToProps".
         // Then, when it comes to connect with action creator,
-        // it will have an api data from 'actions' foleder.
+        //      it will have an api data from 'actions' foleder.
         console.log('this.props.posts in render: ', this.props.posts);
 
         console.log('this.renderPosts(): ', this.renderPosts())        

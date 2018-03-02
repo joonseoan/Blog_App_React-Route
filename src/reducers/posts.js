@@ -2,8 +2,7 @@ import { FETCH_POSTS } from '../actions';
 
 import _ from 'lodash';
 
-
-// state = {} : we will get default state. an empty object
+// state = {} : we will get default state, an empty object
 export default function (state = {}, action) {
 
     switch (action.type) {
@@ -26,9 +25,10 @@ export default function (state = {}, action) {
             // posts => array
             // 'id' => unique key
             //1)
+
             _.mapKeys(posts, 'id')
 
-            => transforming the previous format to !!
+            => result: transforming the previous format to !!
             
             { 
               "4":{"id":4,"title":"hi"},
@@ -43,13 +43,14 @@ export default function (state = {}, action) {
             => { "id":4,"title":"hi" }
          *  
          */
-        console.log('action.payload.data: ', action.payload.data);
+
+        console.log('action.payload: ', action.payload);
+
+        // returns an array object
+        console.log('action.payload.data: ', action.payload.data); 
         
-        // .data is required on the basis of web policy
+        // transforming the array to plain object type with key "id"
         console.log ('mapKeys', _.mapKeys(action.payload.data, 'id'));
-        
-        //just to copare normal map to above
-        //conslole.log('map', action.payload.data);
 
         return _.mapKeys(action.payload.data, 'id');
         

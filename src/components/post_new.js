@@ -4,25 +4,28 @@ import React, { Component } from 'react';
 //
 //  "Field" and "reduxForm" do a role of kinds of the helper function.
 
-//   - "Field"  is a function to specify and collect "form tags" like input
+//   - "Field" is a function to specify and collect "form tags" of HTML like "input"
 //      It is used to specify different HTML form elements in Field.
 // 
 //   - 1) "reduxForm" is a kind of "connect" helper function for the component
-//      to communicate with the additional "reducer", specifically
-//      " form: formReducer" defined in reducers, "reducers/index.js".
+//      to communicate with the additional "reducer" and "action creator", specifically
+//      through " form: formReducer" defined in reducers, "reducers/index.js" and a call
+//      of action creator here.        
 //
-//      The "reduxForm" function is specified at the bottom of the code.
+//      BTW, the "reduxForm" function is specified at the bottom of the code.
 
 
-import {Field, reduxForm} from 'redux-form';
+import { Field, reduxForm } from 'redux-form';
 
 class PostNew extends Component {
 
     // By convention, the argument name is "field".
     // "field" as an object type
-    //   includes all properties arbitrary defined in <Field> tag 
-    /**
-     *  {input: {…}, meta: {…}, showTitle: "Title"}
+    //   includes all properties (arbitrarly) defined in <Field> tag. 
+    
+    /** [Find the below]
+     
+        {input: {…}, meta: {…}, showTitle: "Title"}
         input
         :
         {name: "title", onBlur: ƒ, onChange: ƒ, onDragStart: ƒ, onDrop: ƒ, …}
@@ -35,8 +38,7 @@ class PostNew extends Component {
         __proto__
         :
         Object 
-     * 
-     * 
+      
      */
 
 
@@ -46,22 +48,27 @@ class PostNew extends Component {
     //2) to dry out the code by combining diffrent "Fields"
     renderField(field) {
 
-        console.log('field: ', field.input); // nothing happens.
+        // because "input" is an object. 
+        // Spread depends on the property, not object
+        console.log('field: ', field.input); 
 
         console.log('...field.input: ', ...field.input); 
 
-        // can be confused 
-        //  because it is supposed to wire up the JSX 
-        //  to the "Field" component of "render()""
+
+        // "field" can be confused 
+        //      because it is supposed to wire up the JSX 
+        //      to the "Field" component of "render()""
 
         // In order to keep returning
-        //  the "JSX's changing state"
-        //  to the Field component specified below ,
-        //  we use "field"argument which contains "event handler"
+        //      the "JSX's changing state"
+        //      to the Field component specified below ,
+        //      we use "field" argument which contains "event handler"
+        //      like {name: "title", onBlur: ƒ, onChange: ƒ, 
+        //                               onDragStart: ƒ, onDrop: ƒ, …} above
 
         // The calling this function from { this.renderTitleField }
         //  just just kick in once. Therefor, it does not reflect
-        //  the changing state.
+        //  the dynamically changing state.
 
         return (
 
@@ -70,9 +77,10 @@ class PostNew extends Component {
                 <label>
 
                     {/* The reason that "field.showTitle is used 
-                        instead of "...field.showTitle" is 
-                        because "showTitle is a simple property that we simply created
-                        and which does not have object list or an array" */}
+                            instead of "...field.showTitle" is 
+                            because "showTitle is a simple property that we simply created
+                            and which does not have object list or an array" */}
+
                     { field.showTitle }
             
                 </label>
@@ -80,7 +88,7 @@ class PostNew extends Component {
                 <input 
                     /*
                         "...field.input" contains a bunch event handler
-                        and props.
+                        and "props" which is tag's attribute value.
 
                         "...field.input" indicates that it is an object
                         that includes all properties of "input" tag.
@@ -101,11 +109,33 @@ class PostNew extends Component {
                     { ...field.input }
     
                 />
+
+                
+                {/**
+                * 3 differnt states of "form"
+                * 
+                * 1. pristine : Every render gives default. Not touched, not input, not selected
+                *               Mainly, it is when this pops up on the screen. 
+                * 
+                * 2. touched : the user has selected or focused in input 
+                *              and then focused out in the input when the user completes the input
+                * 
+                * 3. invalid : after validation, the result.
+                * 
+                */}
+
                 {/*If an error occurs, 
                     "field.meta* receives the error message 
                     and add the message in 'error' property of "field.meta"
                     we created in the validate(value) function */}
-                { field.meta.error }
+                {/* Don't be confused with error= {} 
+                    It means that error message shows up only 
+                    when the user completes touched 
+                    (range: click () or select - work on it - focus away from it)
+                    
+                    BTW, "touched" is property of "field.meta"
+                */}
+                { field.meta.touched ? field.meta.error : "" }
 
             </div>
 
@@ -122,13 +152,60 @@ class PostNew extends Component {
     }
     */
 
+    // values are automatically from <input> 
+    onSubmit(values) {
+
+        console.log('values in onSubmit(): ', values)
+
+    }
+
     render() {
+
+        // { handleSubmit } is built-in property of redux-form.
+        // As redux-form is wired up to this component, "PostNew"
+        //      a ton of properties of redux-form will walk throuth the component/
+        // Here, we just pulled off the one, "handleSubmit" property 
+        //      to control "submit"
+        const { handleSubmit } = this.props;
 
         return(
 
             // It is the first form wiring up to the first 'Field'
             <div>
-                <form>
+                {/*
+                    <form onSubmit = {}>
+                    redux-from handes the states of "form".
+                    For intance, the "values" in "form" and validation of "values.""
+
+                    *
+                    However, it does not take care of posting some data
+                    back in a server, what so eveer.
+
+                    The users or programers only are interested in doing 
+                    something with "values" of "form". 
+
+                    So we need to get "values" involved in redux!!!!
+                    Then, we need to pass those data through costomized logic
+                    to have the data making the application out.
+                    *
+                     
+                     
+                    "handleSubmit" property deals with taking a data
+                        and saving data which redux-form itself does not
+                        manage. redux-form mainly deals with "value state" 
+                        and "validation"!!!!
+                    
+                    In order to take form data, "handleSubmit" is necessary
+                        ,binding the "onSubmit()" helper function specified above.
+                
+                    Just bear in mind that this "handleSubmit" will execute
+                        after confirmation that there is no error in validation.
+                    
+                    *
+                    * FYI, we can bind the helper function when we call it.!!!
+                    * 
+                */}
+                <form onSubmit = { handleSubmit(this.onSubmit.bind(this)) }>
                     <Field
 
                     /*  'name = title' tells us here what kind of states
@@ -147,7 +224,6 @@ class PostNew extends Component {
                                 Therefore, "Field" sends a component to contains
                                 JSX which has tools to show the user interface , visual
                                 face.
-
 
                     */
                         name = "title"
@@ -179,7 +255,6 @@ class PostNew extends Component {
 
                         //2)
                         component = { this.renderField }
-
                         showTitle = "Categories"
                     />
 
@@ -187,10 +262,13 @@ class PostNew extends Component {
 
                         name = "contents"
                         component = { this.renderField }
-
                         showTitle = "Cotents space"
                     
                     />
+
+                    {/*For the submit button, we do not use "Field".*/}
+                    <button type = "submit" className = "btn btn-primary">
+                    Submit</button>
                 </form>
             </div>
         );
@@ -279,3 +357,16 @@ export default reduxForm({
 
 })(PostNew);
 */
+
+/**
+ * 3 differnt states of "form"
+ * 
+ * 1. pristine : Every render gives default. Not touched, not input, not selected
+ *               Mainly, it is when this pops up on the screen. 
+ * 
+ * 2. touched : the user has selected or focused in input 
+ *              and then focused out in the input when the user completes the input
+ * 
+ * 3. invalid : after validation, the result.
+ * 
+ */

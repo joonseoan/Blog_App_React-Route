@@ -3,19 +3,21 @@ import { combineReducers } from 'redux';
 /**
  * Redux Form
 
-    1. Web Site (It is really important)
+    1. Web Site (It is really important.)
     https://redux-form.com/7.2.3/
 
     2. Setup
     npm install --save redux-form@6.6.3
+
+    Great reference: https://redux-form.com/7.0.4/examples/
  * 
  */
 
-// Step 1: Identify different pieces form state
+// Step 1: Identify different pieces of form states
 // "redux-form" hooks up with "combineReduces" call.
 // "redux-form" uses all "redux intances"
 // So "redux instances" handles all states introduced by "redu-form"
-// Then "redux-form" will wire up with "action creator"
+// Then "redux-form" will wire up to "action creator"
 
 // "reducer" is a property from 'redux-form'
 // "as" a keyword:  "reduecer" assigned to "formReducer" 

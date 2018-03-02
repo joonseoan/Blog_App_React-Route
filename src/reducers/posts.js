@@ -44,6 +44,7 @@ export default function (state = {}, action) {
          *  
          */
         console.log('action.payload.data: ', action.payload.data);
+        
         // .data is required on the basis of web policy
         console.log ('mapKeys', _.mapKeys(action.payload.data, 'id'));
         

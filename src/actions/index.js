@@ -19,6 +19,8 @@ export const CREATE_POST = 'CREATE_POST';
 
 export const FETCH_POST = 'FETCH_POST';
 
+export const DELETE_POST = 'DELETE_POST';
+
 
 const ROOT_URL = 'http://reduxblog.herokuapp.com/api/';
 
@@ -26,7 +28,7 @@ const API_KEY = KEY;
 
 export function fetchPosts() {
 
-    const request = axios.get(`${ROOT_URL}/posts${API_KEY}`);
+    const request = axios.get(`${ROOT_URL}posts${API_KEY}`);
 
     console.log('request: ', request);
 
@@ -47,11 +49,14 @@ export function createPost(values, callback) {
 
     // Use callback and promise here to route 
     //      from "NewPost" to "PostsIndex" component. 
-    const request = axios.post(`${ ROOT_URL }/posts${ API_KEY }`, values)
+    // "post" does not return "value"
+    const request = axios.post(`${ ROOT_URL }posts${ API_KEY }`, values)
         
         // Like this, "promise" is able to control "callback"
         //      which is asynchronous.
         .then( () => {
+
+            console.log('request in createPost: ', request);
 
             // After the value data is successfully posted 
             //      to the blog server, execute this callback function.
@@ -62,7 +67,7 @@ export function createPost(values, callback) {
             callback();
 
         });
-
+            
             // Then, finally returs action type and payload 
             //      which is a result.
             return {
@@ -73,16 +78,46 @@ export function createPost(values, callback) {
                 payload: request
 
             };
+         
 }
 
 export function fetchPost(id) {
 
-    const request = axios.get(`${ ROOT_URL }/posts/${id}${ API_KEY }`);
+    const request = axios.get(`${ ROOT_URL }posts/${id}${ API_KEY }`);
+
+    // The "blog page" returns a single object element 
+    //      with the specified "id" 
+    console.log('request in fetchPost(): ', request);
 
     return {
 
         type: FETCH_POST,
         payload: request
+
+    };
+
+}
+
+export function deletePost(id, callback) {
+
+    // Please, remember that we must delete the post
+    //      inside of the blog.
+    // "delete" is a preset of the blog api doc.
+    const request = axios.delete(`${ ROOT_URL }posts/${id}${ API_KEY }`)
+        .then(() => {
+
+            callback();
+
+        });
+
+    // We do not need to access the blog again
+    //      after we delete the post route.
+    // Instead, we should put "id" to notify to the user 
+    //      what "id" was deleted.
+    return {
+
+        type: DELETE_POST,
+        payload: id
 
     }
 

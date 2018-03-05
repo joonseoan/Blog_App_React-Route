@@ -61,7 +61,10 @@ class PostsIndex extends Component {
             // We can access the property or element in this array
             // ***** because "map()" is implemented here.
             <li className ='list-group-item' key = { post.id }>
-                { post.title }
+            
+                <Link to = {`/post/${post.id}`}>
+                    { post.title }
+                </Link>
             </li>
         );
 

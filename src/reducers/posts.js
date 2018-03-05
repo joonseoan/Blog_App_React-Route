@@ -1,4 +1,5 @@
-import { FETCH_POSTS } from '../actions';
+// FETCH_POST is to get a single post which was posted.
+import { FETCH_POSTS, FETCH_POST } from '../actions';
 
 import _ from 'lodash';
 
@@ -6,6 +7,25 @@ import _ from 'lodash';
 export default function (state = {}, action) {
 
     switch (action.type) {
+
+        case FETCH_POST:
+
+        // 하나 하나 분석 해 볼 것.
+        
+        const post = action.payload.data;
+        console.log('post: ', post);
+
+        const newState = { ...state };
+        console.log('newState: ', newState);
+        newState[post.id] = post;
+        return newState;
+        
+
+
+        // [] does not make an array. 
+        // It stands for making a key with "id".
+        //return { ...state, 
+        //    [action.payload.data.id] : action.payload.data };
 
         case FETCH_POSTS:
 

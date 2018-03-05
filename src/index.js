@@ -154,6 +154,8 @@ import PostsIndex from './components/posts_index';
 
 import PostNew from './components/post_new';
 
+import PostShow from './components/post_show';
+
 // wiring promise up to middleware (promise)
 const createStoreWithMiddleware = applyMiddleware(promise)(createStore);
 
@@ -254,7 +256,12 @@ ReactDOM.render(
           */}
 
           <Route path = "/posts/new" component = {PostNew} />
-          <Route path = "/" component = {PostsIndex} />
+          
+          {/*Using "id" to get a specific single post
+           out of the posted lists*/}
+          <Route path = "/post/:id" component = { PostShow } />
+          
+          <Route path = "/" component = {PostsIndex} />        
 
           {/*A small issue is here. 
           in the same route below, the post index is also rendered.*/}

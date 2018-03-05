@@ -17,6 +17,13 @@ import React, { Component } from 'react';
 
 import { Field, reduxForm } from 'redux-form';
 
+import { Link } from 'react-router-dom';
+
+import { connect } from 'react-redux';
+
+import { createPost } from '../actions';
+
+
 class PostNew extends Component {
 
     // By convention, the argument name is "field".
@@ -50,7 +57,7 @@ class PostNew extends Component {
 
         // because "input" is an object. 
         // Spread depends on the property, not object
-        console.log('field: ', field.input); 
+        console.log('field: ', field); 
 
         console.log('...field.input: ', ...field.input); 
 
@@ -70,10 +77,28 @@ class PostNew extends Component {
         //  just just kick in once. Therefor, it does not reflect
         //  the dynamically changing state.
 
+        // it is a way to desturcture "field"'s first and second...children
+        const { meta : { touched, error } } = field;
+
+        // 1)
+        // const className = `form-group ${field.meta.touched && field.meta.error
+        // ? has-danger : ''}`;
+
+        // as "{ meta }" is declared above, we can remove "field" of "field.meta error"
+        // { touched : touched }
+        // when "touched" and "error" exist together, 
+        //      show the error message with red color.
+        // 2)
+        const className = `form-group ${ touched && error ? 'has-danger' : '' }`
+
         return (
 
-            <div className = "form-group">
+            // 1)
+            // <div className = "form-group has-danger">
 
+            //2)
+            // as "className" variable is declared above
+            <div className = { className } >
                 <label>
 
                     {/* The reason that "field.showTitle is used 
@@ -128,15 +153,19 @@ class PostNew extends Component {
                     "field.meta* receives the error message 
                     and add the message in 'error' property of "field.meta"
                     we created in the validate(value) function */}
-                {/* Don't be confused with error= {} 
+
+                {/* Don't be confused with "error = {}" 
                     It means that error message shows up only 
-                    when the user completes touched 
+                    when the user completes touched :
                     (range: click () or select - work on it - focus away from it)
                     
                     BTW, "touched" is property of "field.meta"
                 */}
-                { field.meta.touched ? field.meta.error : "" }
+                <div className = "text-help">
 
+                    { touched ? error : "" }
+                
+                </div>
             </div>
 
         );
@@ -155,7 +184,23 @@ class PostNew extends Component {
     // values are automatically from <input> 
     onSubmit(values) {
 
-        console.log('values in onSubmit(): ', values)
+        console.log('values in onSubmit(): ', values);
+        
+        // It automatically route to "root" directory.
+        // However, it is after the index.js renders "html" documemnt.
+        // Therfore, the result on "/" root directory does not show
+        //      the value just sent to the API of the blog.
+        // this.props.history.push('/');
+
+        // After the value data is sent to the action creator,
+        //      then action creator posts the data to the blog server,
+        //      it can "route" back to the root directory.
+        this.props.createPost(values, () => {
+
+            const { history : { push } } = this.props; 
+            push('/');
+
+        });
 
     }
 
@@ -255,12 +300,13 @@ class PostNew extends Component {
 
                         //2)
                         component = { this.renderField }
+
                         showTitle = "Categories"
                     />
 
                     <Field
 
-                        name = "contents"
+                        name = "content"
                         component = { this.renderField }
                         showTitle = "Cotents space"
                     
@@ -269,7 +315,12 @@ class PostNew extends Component {
                     {/*For the submit button, we do not use "Field".*/}
                     <button type = "submit" className = "btn btn-primary">
                     Submit</button>
+
+                    <Link to = "/" className = "btn btn-danger">Cancel</Link>
+
                 </form>
+
+                
             </div>
         );
     }
@@ -308,10 +359,10 @@ function validate(value) {
     
     }
 
-    if (!value.contents) {
+    if (!value.content) {
 
         // create and add "title" key and value of "Please, enter title"
-        err.contents = 'Please, enter contents.';
+        err.content = 'Please, enter contents.';
     
     }
 
@@ -332,6 +383,9 @@ function validate(value) {
 
 // It handles multiple pieces of forms in same statements
 // "reduxForm" here to direclty communicate with "reducers" 
+// 1) 
+// only when we use "reduxFomr" 
+/*
 export default reduxForm({
 
     //  configuration options here
@@ -346,6 +400,24 @@ export default reduxForm({
 // As we specify "PostNew" component, 
 //  "reduxForm" wires the component to "reducers"
 })(PostNew);
+*/
+
+
+//2)
+// only when we use "reduxForm" & redux "connect" together
+export default reduxForm({
+
+    // connection to "reducers"
+    form: 'PostsNewForm',
+    validate
+
+})(
+    // connection to "action creators"
+    // The "connect" component should be inside of "reduxForm"
+    connect(null, { createPost })(PostNew)
+
+);
+
 
 /* 
 [FYI]
